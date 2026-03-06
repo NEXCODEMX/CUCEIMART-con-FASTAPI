@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CUCEI MART — Panel de Emprendedor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg        : #07090f;
+      --bg-card   : #0d1120;
+      --bg-input  : rgba(255,255,255,.05);
+      --accent-1  : #5b8cff;
+      --accent-2  : #a259ff;
+      --accent-3  : #38e8c5;
+      --text-hi   : #f0f4ff;
+      --text-lo   : #6b7a99;
+      --border    : rgba(91,140,255,.14);
+      --danger    : #ff4d6d;
+      --success   : #38e8c5;
+      --radius    : 14px;
+      --nav-h     : 64px;
+      --sidebar-w : 240px;
+    }
+
+    body { background: var(--bg); color: var(--text-hi); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-h);
+      background: rgba(7,9,15,.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 28px; gap: 20px;
+    }
+    .nav-brand {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .nav-sep { width: 1px; height: 24px; background: var(--border); }
+    .nav-section {
+      font-size: .82rem; color: var(--text-lo); font-weight: 500;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .nav-section i { color: var(--accent-3); }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+    .nav-user {
+      display: flex; align-items: center; gap: 9px;
+      padding: 6px 14px; border-radius: 8px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      font-size: .85rem;
+    }
+    .nav-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; flex-shrink: 0;
+    }
+    .btn-nav {
+      padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-lo); font-size: .82rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      display: flex; align-items: center; gap: 6px;
+      transition: all .2s;
+    }
+    .btn-nav:hover { color: var(--text-hi); border-color: rgba(255,255,255,.2); }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: calc(100vh - var(--nav-h)); }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: rgba(13,17,32,.6);
+      border-right: 1px solid var(--border);
+      padding: 24px 12px;
+      position: sticky; top: var(--nav-h);
+      height: calc(100vh - var(--nav-h));
+      overflow-y: auto;
+    }
+    .sidebar-label {
+      font-size: .68rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--text-lo); padding: 0 10px; margin-bottom: 6px; margin-top: 20px;
+    }
+    .sidebar-label:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 9px; cursor: pointer;
+      font-size: .875rem; color: var(--text-lo);
+      transition: all .2s; border: none; background: transparent;
+      width: 100%; text-align: left; font-family: 'DM Sans', sans-serif;
+    }
+    .nav-item i { width: 18px; text-align: center; font-size: .9rem; }
+    .nav-item:hover { background: rgba(255,255,255,.05); color: var(--text-hi); }
+    .nav-item.active { background: rgba(91,140,255,.12); color: var(--accent-1); }
+    .nav-item .badge {
+      margin-left: auto; font-size: .68rem; padding: 2px 7px;
+      border-radius: 20px; background: rgba(91,140,255,.2); color: var(--accent-1);
+    }
+
+    /* ── Main content ── */
+    .main { flex: 1; padding: 32px 36px; min-width: 0; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-title {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem;
+      margin-bottom: 4px;
+    }
+    .page-subtitle { color: var(--text-lo); font-size: .9rem; font-weight: 300; }
+
+    /* ── Section panels ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 1rem; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 9px;
+    }
+    .card-title i { color: var(--accent-1); }
+
+    /* ── Store profile card ── */
+    .store-profile-header {
+      display: flex; align-items: flex-start; gap: 24px;
+      margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .logo-upload-zone {
+      width: 100px; height: 100px; border-radius: 18px; flex-shrink: 0;
+      border: 2px dashed var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: border-color .2s, background .2s;
+      background: rgba(255,255,255,.03);
+    }
+    .logo-upload-zone:hover { border-color: var(--accent-1); background: rgba(91,140,255,.06); }
+    .logo-upload-zone img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .logo-upload-zone .upload-hint {
+      font-size: .7rem; color: var(--text-lo); text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      pointer-events: none; z-index: 1;
+    }
+    .logo-upload-zone .upload-hint i { font-size: 1.4rem; color: var(--accent-1); }
+    .logo-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.55);
+      display: none; align-items: center; justify-content: center;
+      font-size: .75rem; color: #fff;
+      flex-direction: column; gap: 5px;
+    }
+    .logo-upload-zone:hover .logo-overlay { display: flex; }
+    #logo-input { display: none; }
+
+    .store-profile-info { flex: 1; min-width: 220px; }
+    .store-name-display {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+    .store-category-display {
+      font-size: .82rem; color: var(--accent-3);
+      display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+    }
+    .store-stats-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .store-stat {
+      font-size: .82rem; color: var(--text-lo);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .store-stat i { color: var(--accent-1); }
+    .store-stat strong { color: var(--text-hi); }
+
+    /* ── Form elements ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid.single { grid-template-columns: 1fr; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.span2 { grid-column: 1 / -1; }
+
+    label {
+      font-size: .75rem; font-weight: 500; color: var(--text-lo);
+      text-transform: uppercase; letter-spacing: .05em;
+      display: flex; align-items: center; gap: 6px;
+    }
+    label i { color: var(--accent-1); }
+
+    input[type=text], input[type=email], input[type=number],
+    input[type=url], textarea, select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 9px; padding: 11px 14px;
+      color: var(--text-hi); font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; outline: none; width: 100%;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent-1);
+      background: rgba(91,140,255,.06);
+      box-shadow: 0 0 0 3px rgba(91,140,255,.10);
+    }
+    input::placeholder, textarea::placeholder { color: rgba(107,122,153,.5); }
+    textarea { resize: vertical; min-height: 90px; }
+    select { appearance: none; cursor: pointer; }
+
+    .char-count { font-size: .72rem; color: var(--text-lo); text-align: right; margin-top: -4px; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 10px 20px; border-radius: 9px; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 8px; transition: all .2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #fff; box-shadow: 0 6px 20px rgba(91,140,255,.3);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(91,140,255,.45); }
+    .btn-secondary {
+      background: rgba(255,255,255,.05); color: var(--text-hi);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.09); }
+    .btn-danger {
+      background: rgba(255,77,109,.12); color: var(--danger);
+      border: 1px solid rgba(255,77,109,.25);
+    }
+    .btn-danger:hover { background: rgba(255,77,109,.22); }
+    .btn-success {
+      background: rgba(56,232,197,.12); color: var(--success);
+      border: 1px solid rgba(56,232,197,.25);
+    }
+    .btn-sm { padding: 7px 14px; font-size: .8rem; }
+
+    .btn.loading { pointer-events: none; opacity: .7; }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+
+    /* ── Alert ── */
+    .alert {
+      display: none; padding: 12px 16px; border-radius: 9px;
+      font-size: .85rem; margin-bottom: 16px; align-items: center; gap: 10px;
+    }
+    .alert.show { display: flex; animation: alertIn .3s ease both; }
+    .alert.error   { background: rgba(255,77,109,.10); border: 1px solid rgba(255,77,109,.22); color: #ff8ca0; }
+    .alert.success { background: rgba(56,232,197,.09); border: 1px solid rgba(56,232,197,.22); color: var(--success); }
+    @keyframes alertIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── Products table ── */
+    .products-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+    }
+    .search-input-wrap {
+      position: relative; flex: 1; max-width: 300px;
+    }
+    .search-input-wrap i {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--text-lo); font-size: .85rem;
+    }
+    .search-input-wrap input { padding-left: 36px; }
+
+    .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: rgba(255,255,255,.03); }
+    th {
+      padding: 12px 16px; text-align: left;
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--text-lo); font-weight: 600; white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 13px 16px; font-size: .875rem;
+      border-bottom: 1px solid rgba(91,140,255,.07);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    .product-thumb {
+      width: 44px; height: 44px; border-radius: 8px; object-fit: cover;
+      background: rgba(255,255,255,.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--text-lo); flex-shrink: 0;
+    }
+    .product-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px; font-size: .72rem; font-weight: 600;
+    }
+    .status-active   { background: rgba(56,232,197,.1);  color: var(--success); }
+    .status-inactive { background: rgba(107,122,153,.1); color: var(--text-lo); }
+    .status-sold_out { background: rgba(255,77,109,.1);  color: var(--danger); }
+
+    .td-actions { display: flex; gap: 6px; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 32px; width: 100%; max-width: 540px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,.6);
+      animation: slideUp .25s ease;
+    }
+    @keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .modal-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-lo); cursor: pointer; font-size: .9rem;
+      display: flex; align-items: center; justify-content: center; transition: all .2s;
+    }
+    .modal-close:hover { color: var(--text-hi); background: rgba(255,255,255,.07); }
+
+    /* Image upload in modal */
+    .img-upload-zone {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 24px; text-align: center; cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative; overflow: hidden;
+    }
+    .img-upload-zone:hover { border-color: var(--accent-1); background: rgba(91,140,255,.04); }
+    .img-upload-zone input[type=file] { display: none; }
+    .img-upload-zone img {
+      max-height: 160px; max-width: 100%; border-radius: 8px;
+      display: none;
+    }
+    .img-upload-zone.has-image img { display: block; margin: 0 auto; }
+    .img-upload-zone.has-image .upload-prompt { display: none; }
+    .upload-prompt { color: var(--text-lo); font-size: .85rem; }
+    .upload-prompt i { font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--accent-1); }
+
+    /* ── Stats cards ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .stat-card-label {
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--text-lo); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stat-card-label i { color: var(--accent-1); }
+    .stat-card-value {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-card-sub { font-size: .78rem; color: var(--text-lo); margin-top: 4px; }
+
+    /* ── Reviews list ── */
+    .review-item {
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .reviewer-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; flex-shrink: 0;
+    }
+    .reviewer-name { font-weight: 500; font-size: .88rem; }
+    .reviewer-date { font-size: .75rem; color: var(--text-lo); margin-left: auto; }
+    .review-stars { color: #f59e0b; font-size: .8rem; }
+    .review-title { font-weight: 600; font-size: .88rem; margin-bottom: 4px; }
+    .review-comment { font-size: .85rem; color: var(--text-lo); line-height: 1.5; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center; padding: 48px 20px; color: var(--text-lo);
+    }
+    .empty-state i { font-size: 2.5rem; display: block; margin-bottom: 14px; opacity: .35; }
+    .empty-state h3 { font-family: 'Syne', sans-serif; color: var(--text-hi); margin-bottom: 6px; }
+    .empty-state p { font-size: .85rem; }
+
+    /* ── No store state ── */
+    .no-store {
+      max-width: 480px; margin: 60px auto; text-align: center;
+    }
+    .no-store-icon {
+      width: 80px; height: 80px; border-radius: 20px;
+      background: linear-gradient(135deg, rgba(91,140,255,.15), rgba(162,89,255,.15));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: var(--accent-1); margin: 0 auto 20px;
+    }
+    .no-store h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; margin-bottom: 10px; }
+    .no-store p { color: var(--text-lo); margin-bottom: 24px; font-size: .9rem; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .store-profile-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <a href="../pages/marketplace.html" class="nav-brand">
+    <i class="fa-solid fa-shop" style="margin-right:7px;"></i>CUCEI MART
+  </a>
+  <div class="nav-sep"></div>
+  <div class="nav-section">
+    <i class="fa-solid fa-store"></i> Panel de Emprendedor
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar"><i class="fa-solid fa-user"></i></div>
+      <span id="nav-username" style="font-size:.85rem;">Cargando...</span>
+    </div>
+    <button class="btn-nav" onclick="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Salir
+    </button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Mi Tienda</div>
+    <button class="nav-item active" onclick="showPanel('overview', this)">
+      <i class="fa-solid fa-gauge-high"></i> Resumen
+    </button>
+    <button class="nav-item" onclick="showPanel('store', this)">
+      <i class="fa-solid fa-store"></i> Perfil de Tienda
+    </button>
+    <button class="nav-item" onclick="showPanel('products', this)">
+      <i class="fa-solid fa-box"></i> Mis Productos
+      <span class="badge" id="products-count">0</span>
+    </button>
+    <button class="nav-item" onclick="showPanel('reviews', this)">
+      <i class="fa-solid fa-star"></i> Resenas
+      <span class="badge" id="reviews-count">0</span>
+    </button>
+
+    <div class="sidebar-label">Cuenta</div>
+    <button class="nav-item" onclick="showPanel('profile', this)">
+      <i class="fa-solid fa-user-pen"></i> Mi Perfil
+    </button>
+    <button class="nav-item" onclick="window.location.href='../pages/marketplace.html'">
+      <i class="fa-solid fa-arrow-left"></i> Ir al Marketplace
+    </button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div id="alert-global" class="alert"><i class="fa-solid fa-circle-info"></i><span id="alert-msg"></span></div>
+
+    <!-- ── OVERVIEW ── -->
+    <div class="panel active" id="panel-overview">
+      <div class="page-header">
+        <h1 class="page-title">Bienvenido, <span id="overview-name" style="background:linear-gradient(90deg,var(--accent-1),var(--accent-3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Emprendedor</span></h1>
+        <p class="page-subtitle">Aqui puedes gestionar todo tu negocio en CUCEI MART</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-label"><i class="fa-solid fa-bag-shopping"></i>Ventas totales</div>
+          <div class="stat-card-value" id="ov-sales">0</div>
+          <div class="stat-card-sub">unidades vendidas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label"><i class="fa-solid fa-box"></i>Productos activos</div>
+          <div class="stat-card-value" id="ov-products">0</div>
+          <div class="stat-card-sub">publicados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label"><i class="fa-solid fa-star"></i>Calificacion</div>
+          <div class="stat-card-value" id="ov-rating">—</div>
+          <div class="stat-card-sub" id="ov-reviews">sin resenas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label"><i class="fa-solid fa-eye"></i>Vistas</div>
+          <div class="stat-card-value" id="ov-views">0</div>
+          <div class="stat-card-sub">en tus productos</div>
+        </div>
+      </div>
+
+      <div id="no-store-msg" class="no-store" style="display:none;">
+        <div class="no-store-icon"><i class="fa-solid fa-store-slash"></i></div>
+        <h2>Aun no tienes tienda</h2>
+        <p>Crea el perfil de tu tienda para empezar a vender en CUCEI MART y llegar a toda la comunidad universitaria.</p>
+        <button class="btn btn-primary" onclick="showPanel('store', document.querySelector('[onclick*=store]'))">
+          <i class="fa-solid fa-plus"></i> Crear mi tienda
+        </button>
+      </div>
+
+      <div id="store-preview" style="display:none;">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-store"></i>Vista previa de tu tienda</div>
+          <div class="store-profile-header">
+            <div id="ov-logo" style="width:80px;height:80px;border-radius:14px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#fff;flex-shrink:0;">
+              <i class="fa-solid fa-store"></i>
+            </div>
+            <div class="store-profile-info">
+              <div class="store-name-display" id="ov-store-name">—</div>
+              <div class="store-category-display"><i class="fa-solid fa-tag"></i><span id="ov-category">—</span></div>
+              <div class="store-stats-row">
+                <span class="store-stat"><i class="fa-solid fa-envelope"></i><span id="ov-email">—</span></span>
+                <span class="store-stat"><i class="fa-brands fa-instagram"></i><span id="ov-ig">—</span></span>
+              </div>
+            </div>
+          </div>
+          <p style="color:var(--text-lo);font-size:.875rem;line-height:1.6;" id="ov-desc">—</p>
+          <div class="btn-row" style="margin-top:16px;">
+            <button class="btn btn-secondary btn-sm" onclick="showPanel('store', document.querySelectorAll('.nav-item')[1])">
+              <i class="fa-solid fa-pen"></i> Editar informacion
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STORE PROFILE ── -->
+    <div class="panel" id="panel-store">
+      <div class="page-header">
+        <h1 class="page-title">Perfil de Tienda</h1>
+        <p class="page-subtitle">Edita el nombre, descripcion, logo y datos de contacto de tu tienda</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-image"></i>Logo de la tienda</div>
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+          <div class="logo-upload-zone" onclick="document.getElementById('logo-input').click()">
+            <div class="upload-hint">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Subir logo</span>
+              <span style="font-size:.65rem;">JPG, PNG, WebP</span>
+            </div>
+            <img id="logo-preview" src="" alt="Logo" style="display:none;" />
+            <div class="logo-overlay">
+              <i class="fa-solid fa-camera"></i>
+              <span>Cambiar</span>
+            </div>
+          </div>
+          <input type="file" id="logo-input" accept="image/*" onchange="previewLogo(this)" />
+          <div>
+            <p style="font-size:.85rem;color:var(--text-hi);margin-bottom:4px;">Logo de tu negocio</p>
+            <p style="font-size:.78rem;color:var(--text-lo);">Sube una imagen cuadrada de al menos 200x200px.<br>Aparecera en el marketplace y en tu perfil.</p>
+            <button class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="uploadLogo()">
+              <i class="fa-solid fa-upload"></i> Guardar logo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-pen-to-square"></i>Informacion de la tienda</div>
+        <div id="store-form-container">
+          <!-- Populated by JS depending on if store exists -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRODUCTS ── -->
+    <div class="panel" id="panel-products">
+      <div class="page-header">
+        <h1 class="page-title">Mis Productos</h1>
+        <p class="page-subtitle">Agrega, edita y gestiona el inventario de tu tienda</p>
+      </div>
+      <div class="products-toolbar">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Buscar producto..." oninput="filterProducts(this.value)" />
+        </div>
+        <button class="btn btn-primary" onclick="openProductModal(null)">
+          <i class="fa-solid fa-plus"></i> Nuevo producto
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table id="products-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Vendidos</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody">
+            <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>Sin productos</h3><p>Agrega tu primer producto.</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── REVIEWS ── -->
+    <div class="panel" id="panel-reviews">
+      <div class="page-header">
+        <h1 class="page-title">Resenas de mi Tienda</h1>
+        <p class="page-subtitle">Lo que dicen tus clientes</p>
+      </div>
+      <div class="card">
+        <div id="reviews-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-star"></i>
+            <h3>Sin resenas aun</h3>
+            <p>Cuando los clientes califiquen tu tienda apareceran aqui.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="panel" id="panel-profile">
+      <div class="page-header">
+        <h1 class="page-title">Mi Perfil</h1>
+        <p class="page-subtitle">Actualiza tu informacion personal</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-user"></i>Datos personales</div>
+        <div class="form-grid">
+          <div class="field">
+            <label><i class="fa-solid fa-id-card"></i>Nombre completo</label>
+            <input type="text" id="profile-name" placeholder="Tu nombre completo" />
+          </div>
+          <div class="field">
+            <label><i class="fa-solid fa-at"></i>Usuario</label>
+            <input type="text" id="profile-username" disabled style="opacity:.5;cursor:not-allowed;" />
+          </div>
+          <div class="field span2">
+            <label><i class="fa-solid fa-quote-left"></i>Bio</label>
+            <textarea id="profile-bio" placeholder="Cuéntale a la comunidad sobre ti..." oninput="countChars(this, 'bio-count', 500)"></textarea>
+            <div class="char-count"><span id="bio-count">0</span>/500</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveProfile()">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── Product Modal ── -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Nuevo producto</h2>
+      <button class="modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div id="modal-alert" class="alert" style="margin-bottom:16px;"></div>
+
+    <input type="hidden" id="modal-product-id" />
+
+    <div class="form-grid" style="margin-bottom:16px;">
+      <div class="field span2">
+        <label><i class="fa-solid fa-box"></i>Nombre del producto</label>
+        <input type="text" id="modal-name" placeholder="Ej. Cable USB-C Premium 2m" maxlength="200" oninput="countChars(this,'name-count',200)" />
+        <div class="char-count"><span id="name-count">0</span>/200</div>
+      </div>
+      <div class="field span2">
+        <label><i class="fa-solid fa-align-left"></i>Descripcion</label>
+        <textarea id="modal-description" placeholder="Describe tu producto detalladamente..." maxlength="500" oninput="countChars(this,'desc-count',500)"></textarea>
+        <div class="char-count"><span id="desc-count">0</span>/500</div>
+      </div>
+      <div class="field">
+        <label><i class="fa-solid fa-tag"></i>Precio (MXN)</label>
+        <input type="number" id="modal-price" placeholder="0.00" min="0" step="0.01" />
+      </div>
+      <div class="field">
+        <label><i class="fa-solid fa-warehouse"></i>Stock disponible</label>
+        <input type="number" id="modal-stock" placeholder="0" min="0" />
+      </div>
+      <div class="field span2">
+        <label><i class="fa-solid fa-hashtag"></i>Etiquetas (separadas por coma)</label>
+        <input type="text" id="modal-tags" placeholder="Ej. tecnologia, cable, carga rapida" />
+      </div>
+      <div class="field span2">
+        <label><i class="fa-solid fa-image"></i>Imagen del producto</label>
+        <div class="img-upload-zone" id="img-zone" onclick="document.getElementById('modal-img-input').click()">
+          <input type="file" id="modal-img-input" accept="image/*" onchange="previewProductImg(this)" />
+          <div class="upload-prompt">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Haz click para subir una imagen
+            <div style="font-size:.72rem;margin-top:4px;color:var(--text-lo);">JPG, PNG, WebP — max 5MB</div>
+          </div>
+          <img id="modal-img-preview" src="" alt="Preview" />
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveProduct()">
+        <i class="fa-solid fa-floppy-disk"></i> <span id="modal-save-label">Crear producto</span>
+      </button>
+      <button class="btn btn-secondary" onclick="closeProductModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+  let token    = localStorage.getItem('cuceimart_token');
+  let userData = JSON.parse(localStorage.getItem('cuceimart_user') || 'null');
+  let myStore  = null;
+  let allProducts = [];
+
+  /* ── Auth guard ── */
+  if (!token || !userData) { window.location.href = '../pages/login.html'; }
+  if (userData.role === 'student') {
+    alert('Esta seccion es solo para emprendedores. Contacta al administrador para cambiar tu rol.');
+    window.location.href = '../pages/marketplace.html';
+  }
+
+  document.getElementById('nav-username').textContent = userData.username;
+  document.getElementById('overview-name').textContent = userData.username;
+
+  /* ── Panel navigation ── */
+  function showPanel(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  /* ── Alert ── */
+  function showAlert(msg, type = 'error', targetId = 'alert-global') {
+    const el  = document.getElementById(targetId);
+    const txt = el.querySelector('span') || el;
+    if (el.querySelector('span')) el.querySelector('span').textContent = msg;
+    const icon = el.querySelector('i');
+    el.className = `alert show ${type}`;
+    if (icon) icon.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
+
+  /* ── Char counter ── */
+  function countChars(el, countId, max) {
+    const len = el.value.length;
+    document.getElementById(countId).textContent = len;
+    if (len > max * 0.9) document.getElementById(countId).style.color = 'var(--danger)';
+    else document.getElementById(countId).style.color = 'var(--text-lo)';
+  }
+
+  /* ── API helper ── */
+  async function api(method, path, body = null, isForm = false) {
+    const opts = {
+      method,
+      headers: { 'Authorization': 'Bearer ' + token },
+    };
+    if (body && !isForm) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    } else if (body && isForm) {
+      opts.body = body;
+    }
+    const res = await fetch(API + path, opts);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.detail || 'Error del servidor');
+    return data;
+  }
+
+  /* ── Load store info ── */
+  async function loadStore() {
+    try {
+      const stores = await api('GET', '/stores/?');
+      // Find my store
+      const me = await api('GET', '/auth/me');
+      myStore = stores.find(s => s.owner_id === me.id) || null;
+
+      if (myStore) {
+        populateOverview(myStore);
+        populateStoreForm(myStore);
+        loadProducts();
+        loadReviews();
+      } else {
+        document.getElementById('no-store-msg').style.display = 'block';
+        document.getElementById('store-preview').style.display = 'none';
+        populateStoreForm(null);
+      }
+
+      // Load profile
+      document.getElementById('profile-name').value     = me.full_name || '';
+      document.getElementById('profile-username').value = me.username || '';
+      document.getElementById('profile-bio').value      = me.bio || '';
+      countChars(document.getElementById('profile-bio'), 'bio-count', 500);
+
+    } catch (err) {
+      showAlert('Error cargando informacion: ' + err.message);
+    }
+  }
+
+  function populateOverview(store) {
+    document.getElementById('no-store-msg').style.display = 'none';
+    document.getElementById('store-preview').style.display = 'block';
+    document.getElementById('ov-store-name').textContent = store.name;
+    document.getElementById('ov-category').textContent   = store.category;
+    document.getElementById('ov-email').textContent      = store.contact_email || 'No especificado';
+    document.getElementById('ov-ig').textContent         = store.instagram_url ? '@' + store.instagram_url.replace(/.*instagram\.com\//,'') : 'No especificado';
+    document.getElementById('ov-desc').textContent       = store.description;
+    document.getElementById('ov-sales').textContent      = store.total_sales ?? 0;
+    document.getElementById('ov-rating').textContent     = store.avg_rating ? store.avg_rating.toFixed(1) : '—';
+    document.getElementById('ov-reviews').textContent    = (store.review_count || 0) + ' resenas';
+
+    if (store.logo_url) {
+      document.getElementById('ov-logo').innerHTML = `<img src="${API}${store.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" />`;
+    }
+  }
+
+  /* ── Store form ── */
+  function populateStoreForm(store) {
+    const container = document.getElementById('store-form-container');
+    const isNew = !store;
+    container.innerHTML = `
+      <div class="form-grid">
+        <div class="field">
+          <label><i class="fa-solid fa-store"></i>Nombre de la tienda</label>
+          <input type="text" id="store-name" placeholder="Ej. TechZone CUCEI" value="${store?.name || ''}" maxlength="200" />
+        </div>
+        <div class="field">
+          <label><i class="fa-solid fa-tag"></i>Categoria</label>
+          <select id="store-category">
+            ${['Tecnologia','Comida','Ropa y Moda','Libros','Arte','Servicios','Electronica','Manualidades','Otro']
+              .map(c => `<option value="${c}" ${store?.category===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field span2">
+          <label><i class="fa-solid fa-align-left"></i>Descripcion</label>
+          <textarea id="store-description" placeholder="Describe tu negocio..." maxlength="1000" oninput="countChars(this,'store-desc-count',1000)">${store?.description || ''}</textarea>
+          <div class="char-count"><span id="store-desc-count">${(store?.description||'').length}</span>/1000</div>
+        </div>
+        <div class="field">
+          <label><i class="fa-solid fa-envelope"></i>Correo de contacto</label>
+          <input type="email" id="store-email" placeholder="tienda@alumnos.udg.mx" value="${store?.contact_email || ''}" />
+        </div>
+        <div class="field">
+          <label><i class="fa-solid fa-phone"></i>Telefono (opcional)</label>
+          <input type="text" id="store-phone" placeholder="+52 33 0000 0000" value="${store?.contact_phone || ''}" />
+        </div>
+        <div class="field span2">
+          <label><i class="fa-brands fa-instagram"></i>URL de Instagram (opcional)</label>
+          <input type="url" id="store-ig" placeholder="https://instagram.com/tutienda" value="${store?.instagram_url || ''}" />
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn btn-primary" onclick="saveStore(${isNew})">
+          <i class="fa-solid fa-floppy-disk"></i> ${isNew ? 'Crear tienda' : 'Guardar cambios'}
+        </button>
+      </div>
+    `;
+
+    // Pre-fill logo if exists
+    if (store?.logo_url) {
+      const logoPreview = document.getElementById('logo-preview');
+      if (logoPreview) {
+        logoPreview.src     = API + store.logo_url;
+        logoPreview.style.display = 'block';
+      }
+    }
+  }
+
+  async function saveStore(isNew) {
+    const body = {
+      name          : document.getElementById('store-name').value.trim(),
+      description   : document.getElementById('store-description').value.trim(),
+      category      : document.getElementById('store-category').value,
+      contact_email : document.getElementById('store-email').value.trim() || null,
+      contact_phone : document.getElementById('store-phone').value.trim() || null,
+      instagram_url : document.getElementById('store-ig').value.trim() || null,
+    };
+
+    if (!body.name || !body.description) {
+      showAlert('El nombre y la descripcion son obligatorios.');
+      return;
+    }
+
+    try {
+      if (isNew) {
+        myStore = await api('POST', '/stores/', body);
+        showAlert('Tienda creada exitosamente.', 'success');
+      } else {
+        myStore = await api('PATCH', '/stores/my', body);
+        showAlert('Tienda actualizada correctamente.', 'success');
+      }
+      populateOverview(myStore);
+      populateStoreForm(myStore);
+    } catch (err) {
+      showAlert('Error: ' + err.message);
+    }
+  }
+
+  /* ── Logo upload ── */
+  function previewLogo(input) {
+    if (!input.files[0]) return;
+    const url = URL.createObjectURL(input.files[0]);
+    const img = document.getElementById('logo-preview');
+    img.src = url; img.style.display = 'block';
+  }
+
+  async function uploadLogo() {
+    if (!myStore) { showAlert('Primero crea tu tienda.'); return; }
+    const file = document.getElementById('logo-input').files[0];
+    if (!file) { showAlert('Selecciona una imagen primero.'); return; }
+
+    const form = new FormData();
+    form.append('file', file);
+    try {
+      const res = await api('POST', '/stores/my/logo', form, true);
+      showAlert('Logo actualizado correctamente.', 'success');
+      myStore.logo_url = res.logo_url;
+      populateOverview(myStore);
+    } catch (err) {
+      showAlert('Error subiendo logo: ' + err.message);
+    }
+  }
+
+  /* ── Products ── */
+  async function loadProducts() {
+    if (!myStore) return;
+    try {
+      const data = await api('GET', `/products/?store_id=${myStore.id}&per_page=100`);
+      allProducts = data.items || [];
+      renderProductsTable(allProducts);
+      document.getElementById('products-count').textContent = allProducts.length;
+      const totalViews = allProducts.reduce((s, p) => s + (p.views || 0), 0);
+      document.getElementById('ov-views').textContent    = totalViews;
+      document.getElementById('ov-products').textContent = allProducts.filter(p => p.status === 'active').length;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function renderProductsTable(products) {
+    const tbody = document.getElementById('products-tbody');
+    if (!products.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">
+        <i class="fa-solid fa-box-open"></i><h3>Sin productos</h3>
+        <p>Agrega tu primer producto con el boton de arriba.</p>
+      </div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="product-thumb">
+              ${p.image_url ? `<img src="${API}${p.image_url}" alt="${p.name}" />` : `<i class="fa-solid fa-image"></i>`}
+            </div>
+            <div>
+              <div style="font-weight:500;font-size:.875rem;">${p.name}</div>
+              <div style="font-size:.75rem;color:var(--text-lo);">${p.tags || '—'}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-weight:600;">$${p.price.toFixed(2)}</td>
+        <td>${p.stock}</td>
+        <td>${p.total_sold}</td>
+        <td><span class="status-badge status-${p.status}">${statusLabel(p.status)}</span></td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-secondary btn-sm" onclick="openProductModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id},'${p.name}')">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function filterProducts(q) {
+    const filtered = allProducts.filter(p =>
+      p.name.toLowerCase().includes(q.toLowerCase()) ||
+      (p.tags || '').toLowerCase().includes(q.toLowerCase())
+    );
+    renderProductsTable(filtered);
+  }
+
+  function statusLabel(s) {
+    return { active:'Activo', inactive:'Inactivo', sold_out:'Agotado' }[s] || s;
+  }
+
+  /* ── Product modal ── */
+  function openProductModal(product) {
+    document.getElementById('product-modal').classList.add('open');
+    document.getElementById('modal-alert').classList.remove('show');
+
+    if (product) {
+      document.getElementById('modal-title').textContent        = 'Editar producto';
+      document.getElementById('modal-save-label').textContent   = 'Guardar cambios';
+      document.getElementById('modal-product-id').value         = product.id;
+      document.getElementById('modal-name').value               = product.name;
+      document.getElementById('modal-description').value        = product.description;
+      document.getElementById('modal-price').value              = product.price;
+      document.getElementById('modal-stock').value              = product.stock;
+      document.getElementById('modal-tags').value               = product.tags || '';
+      countChars(document.getElementById('modal-name'), 'name-count', 200);
+      countChars(document.getElementById('modal-description'), 'desc-count', 500);
+      if (product.image_url) {
+        const zone = document.getElementById('img-zone');
+        const img  = document.getElementById('modal-img-preview');
+        img.src = API + product.image_url;
+        zone.classList.add('has-image');
+      }
+    } else {
+      document.getElementById('modal-title').textContent      = 'Nuevo producto';
+      document.getElementById('modal-save-label').textContent = 'Crear producto';
+      document.getElementById('modal-product-id').value       = '';
+      document.getElementById('modal-name').value             = '';
+      document.getElementById('modal-description').value      = '';
+      document.getElementById('modal-price').value            = '';
+      document.getElementById('modal-stock').value            = '';
+      document.getElementById('modal-tags').value             = '';
+      document.getElementById('img-zone').classList.remove('has-image');
+      document.getElementById('name-count').textContent       = '0';
+      document.getElementById('desc-count').textContent       = '0';
+    }
+  }
+
+  function closeProductModal() {
+    document.getElementById('product-modal').classList.remove('open');
+  }
+
+  function previewProductImg(input) {
+    if (!input.files[0]) return;
+    const img  = document.getElementById('modal-img-preview');
+    const zone = document.getElementById('img-zone');
+    img.src = URL.createObjectURL(input.files[0]);
+    zone.classList.add('has-image');
+  }
+
+  async function saveProduct() {
+    const id   = document.getElementById('modal-product-id').value;
+    const name = document.getElementById('modal-name').value.trim();
+    const desc = document.getElementById('modal-description').value.trim();
+    const price = parseFloat(document.getElementById('modal-price').value);
+    const stock = parseInt(document.getElementById('modal-stock').value);
+    const tags  = document.getElementById('modal-tags').value.trim();
+
+    if (!name || !desc || isNaN(price) || isNaN(stock)) {
+      showAlert('Completa todos los campos obligatorios.', 'error', 'modal-alert');
+      return;
+    }
+
+    try {
+      let product;
+      if (id) {
+        product = await api('PATCH', `/products/${id}`, { name, description: desc, price, stock, tags: tags || null });
+        showAlert('Producto actualizado.', 'success');
+      } else {
+        product = await api('POST', '/products/', { name, description: desc, price, stock, tags: tags || null });
+        showAlert('Producto creado.', 'success');
+      }
+
+      // Upload image if selected
+      const imgFile = document.getElementById('modal-img-input').files[0];
+      if (imgFile) {
+        const form = new FormData();
+        form.append('file', imgFile);
+        await api('POST', `/products/${product.id}/image`, form, true);
+      }
+
+      closeProductModal();
+      loadProducts();
+    } catch (err) {
+      showAlert('Error: ' + err.message, 'error', 'modal-alert');
+    }
+  }
+
+  async function deleteProduct(id, name) {
+    if (!confirm(`Eliminar "${name}"? Esta accion no se puede deshacer.`)) return;
+    try {
+      await api('DELETE', `/products/${id}`);
+      showAlert('Producto eliminado.', 'success');
+      loadProducts();
+    } catch (err) {
+      showAlert('Error: ' + err.message);
+    }
+  }
+
+  /* ── Reviews ── */
+  async function loadReviews() {
+    if (!myStore) return;
+    try {
+      const reviews = await api('GET', `/reviews/store/${myStore.id}`);
+      document.getElementById('reviews-count').textContent = reviews.length;
+      const list = document.getElementById('reviews-list');
+      if (!reviews.length) return;
+
+      list.innerHTML = reviews.map(r => `
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-avatar"><i class="fa-solid fa-user"></i></div>
+            <div>
+              <div class="reviewer-name">${r.reviewer?.full_name || r.reviewer?.username || 'Usuario'}</div>
+              <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+            </div>
+            <span class="reviewer-date">${new Date(r.created_at).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})}</span>
+          </div>
+          ${r.title ? `<div class="review-title">${r.title}</div>` : ''}
+          <div class="review-comment">${r.comment}</div>
+        </div>`).join('');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /* ── Profile ── */
+  async function saveProfile() {
+    const body = {
+      full_name : document.getElementById('profile-name').value.trim(),
+      bio       : document.getElementById('profile-bio').value.trim() || null,
+    };
+    if (!body.full_name) { showAlert('El nombre no puede estar vacio.'); return; }
+    try {
+      await api('PATCH', '/auth/me', body);
+      showAlert('Perfil actualizado correctamente.', 'success');
+    } catch (err) {
+      showAlert('Error: ' + err.message);
+    }
+  }
+
+  /* ── Logout ── */
+  function logout() {
+    localStorage.removeItem('cuceimart_token');
+    localStorage.removeItem('cuceimart_user');
+    window.location.href = '../pages/login.html';
+  }
+
+  /* ── Close modal on overlay click ── */
+  document.getElementById('product-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeProductModal();
+  });
+
+  /* ── Init ── */
+  loadStore();
+</script>
+</body>
+</html>
